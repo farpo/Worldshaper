@@ -5,7 +5,7 @@ public enum BrushType {
     SPHERE(true, true, true, true, true),
     CYLINDER(true, true, true, true, true),
     SURFACE(false, true, true, true, false),
-    SINGLEBLOCK(false, false, false, false, false);
+    SINGLEBLOCK(true, true, true, false, false);
 
     private final boolean supportsPlace;
     private final boolean supportsReplace;

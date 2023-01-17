@@ -1,0 +1,11 @@
+name: Worldshaper
+version: 1.0.0
+main: eu.ansquare.worldshaper.Worldshaper
+description: The worldshaper
+author: SasaElele
+website: https://papermc.io
+api-version: 1.19
+commands:
+  worldshaper:
+    description: Worldshaper command
+    usage: "Usage: /<command> [shoot]"

@@ -64,6 +64,79 @@ public class Cuboid {
             finalY2 = originY;
             placeCuboid(finalX1, finalY1, finalZ1, finalX2, finalY2, finalZ2, item, player);
         }
+        else if (im.getAttach(item) == AttachType.INSERT){
+            BlockFace face = target.getBlockFace();
+            Block targetBlock = target.getBlock();
+            BlockFaceEnumSolver bfes = new BlockFaceEnumSolver();
+            Vector<Integer> directionNumbers = bfes.getDirectionNumbers(face);
+            int originX = targetBlock.getX();
+            int originY = targetBlock.getY();
+            int originZ = targetBlock.getZ();
+            int sizeX = im.getSizeValue(item, Integer.toString(1)) - 1;
+            int sizeY = im.getSizeValue(item, Integer.toString(2)) - 1;
+            int sizeZ = im.getSizeValue(item, Integer.toString(3)) - 1;
+            int finalX1 = originX;
+            int finalX2 = originX;
+            int finalY1 = originY;
+            int finalY2 = originY;
+            int finalZ1 = originZ;
+            int finalZ2 = originZ;
+            if(directionNumbers.elementAt(1) != 0){
+                finalX1 = originX + sizeX * directionNumbers.elementAt(1) * -1;
+                finalX2 = originX;
+                if ((sizeY % 2 == 0)) {
+                    finalY1 = originY + sizeY / 2;
+                    finalY2 = originY - sizeY / 2;
+                } else {
+                    finalY1 = originY + (int) addRemove((double) sizeY, true);
+                    finalY2 = originY - (int) addRemove((double) sizeY, false);
+                }
+                if ((sizeZ % 2 == 0)) {
+                    finalZ1 = originZ + sizeZ / 2;
+                    finalZ2 = originZ - sizeZ / 2;
+                } else {
+                    finalZ1 = originZ + (int) addRemove((double) sizeZ, true);
+                    finalZ2 = originZ - (int) addRemove((double) sizeZ, false);
+                }
+            }
+            if(directionNumbers.elementAt(2) != 0){
+                finalY1 = originY + sizeY * directionNumbers.elementAt(2) * -1;
+                finalY2 = originY;
+                if ((sizeX % 2 == 0)) {
+                    finalX1 = originX + sizeX / 2;
+                    finalX2 = originX - sizeX / 2;
+                } else {
+                    finalX1 = originX + (int) addRemove((double) sizeX, true);
+                    finalX2 = originX - (int) addRemove((double) sizeX, false);
+                }
+                if ((sizeZ % 2 == 0)) {
+                    finalZ1 = originZ + sizeZ / 2;
+                    finalZ2 = originZ - sizeZ / 2;
+                } else {
+                    finalZ1 = originZ + (int) addRemove((double) sizeZ, true);
+                    finalZ2 = originZ - (int) addRemove((double) sizeZ, false);
+                }
+            }
+            if(directionNumbers.elementAt(3) != 0){
+                finalZ1 = originZ + sizeZ * directionNumbers.elementAt(3) * -1;
+                finalZ2 = originZ;
+                if ((sizeX % 2 == 0)) {
+                    finalX1 = originX + sizeX / 2;
+                    finalX2 = originX - sizeX / 2;
+                } else {
+                    finalX1 = originX + (int) addRemove((double) sizeX, true);
+                    finalX2 = originX - (int) addRemove((double) sizeX, false);
+                }
+                if ((sizeY % 2 == 0)) {
+                    finalY1 = originY + sizeY / 2;
+                    finalY2 = originY - sizeY / 2;
+                } else {
+                    finalY1 = originY + (int) addRemove((double) sizeY, true);
+                    finalY2 = originY - (int) addRemove((double) sizeY, false);
+                }
+            }
+            placeCuboid(finalX1, finalY1, finalZ1, finalX2, finalY2, finalZ2, item, player);
+        }
 
     }
    /* it would probably help if you only did Math.min and max once before yo start doing anything else
@@ -80,39 +153,40 @@ if you want to generally keep how it works now, instead of delaying everything b
     void placeCuboid(int x1, int y1, int z1, int x2, int y2, int z2, ItemStack item, Player player) {
         ItemManager im = new ItemManager();
         int minX = Math.min(x1, x2);
-        int minY = Math.min(y1, y2)
-        int minZ = Math.min(z1, z2)
-        int maxX = Math.max(x1, x2)
-        int maxY = Math.max(y1, y2)
-        int maxZ = Math.max(z1, z2)
+        int minY = Math.min(y1, y2);
+        int minZ = Math.min(z1, z2);
+        int maxX = Math.max(x1, x2);
+        int maxY = Math.max(y1, y2);
+        int maxZ = Math.max(z1, z2);
         for (int x = minX; x <= maxX; x++) {
             int finalX = x;
-            new BukkitRunnable() {
-                public void run() {
-                    for (int y = minY; y <= maxY; y++) {
-                        for (int z = minZ; z <= maxZ; z++) {
-                            Block b = player.getWorld().getBlockAt(finalX, y, z);
-                            switch (im.getTool(item)) {
-                                case REPLACE:
-                                    if (!b.isEmpty()) {
-                                        b.setType(im.getPickedBlock(item));
-                                    }
-                                    break;
-                                case PLACE:
-                                    b.setType(im.getPickedBlock(item));
-                                    break;
-                                case CLEAR:
-                                    b.setType(Material.AIR);
-                                    break;
-                                default:
-                                    b.setType(im.getPickedBlock(item));
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    Block b = player.getWorld().getBlockAt(finalX, y, z);
+                    switch (im.getTool(item)) {
+                        case REPLACE:
+                            if (!b.isEmpty()) {
+                                b.setType(im.getPickedBlock(item));
                             }
-
-                        }
-
+                            break;
+                        case PLACE:
+                            b.setType(im.getPickedBlock(item));
+                            break;
+                        case CLEAR:
+                            b.setType(Material.AIR);
+                            break;
+                        default:
+                            b.setType(im.getPickedBlock(item));
                     }
+
                 }
-            }.runTaskLater(Worldshaper.getPlugin(), 10);
+
+            }
+            /*new BukkitRunnable() {
+                public void run() {
+
+                }
+            }.runTaskLater(Worldshaper.getPlugin(), 10);*/
         }
     }
     public double addRemove(double number, boolean add) {
