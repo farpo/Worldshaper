@@ -1,14 +1,21 @@
 package eu.ansquare.worldshaper;
 
+import eu.ansquare.worldshaper.gui.GuiManager;
 import eu.ansquare.worldshaper.itemmanager.ItemManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Worldshaper extends JavaPlugin {
-    static Plugin thisPlugin;
+import static org.bukkit.Bukkit.getServer;
+
+public class Worldshaper extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
         if (label.equalsIgnoreCase("worldshaper")){
@@ -41,13 +48,23 @@ public class Worldshaper extends JavaPlugin {
         }
         return false;
     }
+
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(new OperationListener(), this);
-        thisPlugin = this;
+        getServer().getPluginManager().registerEvents(this, this);
     }
-    public static Plugin getPlugin(){
-        return thisPlugin;
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        ItemManager im = new ItemManager();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (im.isWorldshaper(item)) {
+            if (event.getAction().isRightClick() && player.isSneaking()){
+                GuiManager gm = new GuiManager();
+                getServer().getPluginManager().registerEvents(gm, this);
+                gm.ExampleGui(item, player);
+            }
+        }
     }
-
 }
