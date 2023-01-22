@@ -127,6 +127,34 @@ public class ItemManager {
             return AttachType.ATTACH;
         }
     }
+    public void setReplaceOnlyTarget(String value, Player player) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        if (isWorldshaper(item)) {
+            NamespacedKey key = new NamespacedKey("worldshaper", "replace-mode");
+            ItemMeta meta = item.getItemMeta();
+            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, value);
+            item.setItemMeta(meta);
+        } else {
+            player.sendMessage("This is not a worldshaper");
+        }
+
+    }
+    public boolean getReplaceOnlyTarget(ItemStack item){
+        NamespacedKey key = new NamespacedKey("worldshaper", "replace-mode");
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        if (container.has(key, PersistentDataType.STRING)){
+            String valueString = container.get(key, PersistentDataType.STRING);
+            if(valueString.equals("true")){
+                return true;
+            }
+            else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
     public void setSizeValue(Player player,String keystring, int value){
         ItemStack item = player.getInventory().getItemInMainHand();
         if (isWorldshaper(item)){
@@ -162,6 +190,15 @@ public class ItemManager {
                     AttachType attach = AttachType.valueOf(args[2].toUpperCase());
                     setAttach(attach, player);
                     break;
+                case "replacemode":
+                    if (args[2].equals("true") || args[2].equals("false")){
+                        setReplaceOnlyTarget(args[2], player);
+                        break;
+                    }
+                    else {
+                        System.out.println("Wrong argument" + args[2]);
+                        break;
+                    }
                 case "size":
                     int value = Integer.parseInt(args[3]);
                     setSizeValue(player, args[2], value);
