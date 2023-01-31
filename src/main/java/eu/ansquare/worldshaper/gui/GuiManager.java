@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,8 @@ public class GuiManager implements Listener {
     ItemStack size1;
     ItemStack size2;
     ItemStack size3;
+
+    ItemStack selectedblock;
 /*    you should probably just implement your own inventoryholder instead of using
     inventory field, your current setup breaks if a second player opens your gui (assuming .equals even works for inventories)*/
     public void ExampleGui(ItemStack item, Player player) {
@@ -240,12 +244,13 @@ public class GuiManager implements Listener {
             inv.clear(35);
         }
     }
+
     ItemMeta metaManager(ItemMeta meta, String lore, String name){
         TextComponent cname = Component.text(name);
+        meta.displayName(cname);
         TextComponent clore = Component.text(lore);
         List<Component> lorelist = new ArrayList<Component>();
         lorelist.add(clore);
-        meta.displayName(cname);
         meta.lore(lorelist);
         return meta;
     }
@@ -437,6 +442,7 @@ public class GuiManager implements Listener {
         }
         createSizeMenu(item);
     }
+
     void fill(int start, int amount, Material material){
         for(int i = start; i <= start + amount; i++){
             inv.setItem(i, new ItemStack(material));

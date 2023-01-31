@@ -37,34 +37,72 @@ public class Cuboid {
             Block targetBlock = target.getBlock();
             BlockFaceEnumSolver bfes = new BlockFaceEnumSolver();
             Vector<Integer> directionNumbers = bfes.getDirectionNumbers(face);
-            int originX = targetBlock.getX() + directionNumbers.elementAt(1);
-            int originY = targetBlock.getY() + directionNumbers.elementAt(2);
-            int originZ = targetBlock.getZ() + directionNumbers.elementAt(3);
+            int originX = targetBlock.getX();
+            int originY = targetBlock.getY();
+            int originZ = targetBlock.getZ();
             int sizeX = im.getSizeValue(item, Integer.toString(1)) - 1;
             int sizeY = im.getSizeValue(item, Integer.toString(2)) - 1;
             int sizeZ = im.getSizeValue(item, Integer.toString(3)) - 1;
-            int finalX1;
-            int finalX2;
-            int finalY1;
-            int finalY2;
-            int finalZ1;
-            int finalZ2;
-            if ((sizeX % 2 == 0)) {
-                finalX1 = originX + sizeX / 2;
-                finalX2 = originX - sizeX / 2;
-            } else {
-                finalX1 = originX + (int) addRemove((double) sizeX, true);
-                finalX2 = originX - (int) addRemove((double) sizeX, false);
+            int finalX1 = originX;
+            int finalX2 = originX;
+            int finalY1 = originY;
+            int finalY2 = originY;
+            int finalZ1 = originZ;
+            int finalZ2 = originZ;
+            if(directionNumbers.elementAt(1) != 0){
+                finalX1 = originX + (1 + sizeX) * directionNumbers.elementAt(1);
+                finalX2 = originX + directionNumbers.elementAt(1);
+                if ((sizeY % 2 == 0)) {
+                    finalY1 = originY + sizeY / 2;
+                    finalY2 = originY - sizeY / 2;
+                } else {
+                    finalY1 = originY + (int) addRemove((double) sizeY, true);
+                    finalY2 = originY - (int) addRemove((double) sizeY, false);
+                }
+                if ((sizeZ % 2 == 0)) {
+                    finalZ1 = originZ + sizeZ / 2;
+                    finalZ2 = originZ - sizeZ / 2;
+                } else {
+                    finalZ1 = originZ + (int) addRemove((double) sizeZ, true);
+                    finalZ2 = originZ - (int) addRemove((double) sizeZ, false);
+                }
             }
-            if ((sizeZ % 2 == 0)) {
-                finalZ1 = originZ + sizeZ / 2;
-                finalZ2 = originZ - sizeZ / 2;
-            } else {
-                finalZ1 = originZ + (int) addRemove((double) sizeZ, true);
-                finalZ2 = originZ - (int) addRemove((double) sizeZ, false);
+            if(directionNumbers.elementAt(2) != 0){
+                finalY1 = originY + (1 + sizeY) * directionNumbers.elementAt(2);
+                finalY2 = originY + directionNumbers.elementAt(2);
+                if ((sizeX % 2 == 0)) {
+                    finalX1 = originX + sizeX / 2;
+                    finalX2 = originX - sizeX / 2;
+                } else {
+                    finalX1 = originX + (int) addRemove((double) sizeX, true);
+                    finalX2 = originX - (int) addRemove((double) sizeX, false);
+                }
+                if ((sizeZ % 2 == 0)) {
+                    finalZ1 = originZ + sizeZ / 2;
+                    finalZ2 = originZ - sizeZ / 2;
+                } else {
+                    finalZ1 = originZ + (int) addRemove((double) sizeZ, true);
+                    finalZ2 = originZ - (int) addRemove((double) sizeZ, false);
+                }
             }
-            finalY1 = originY + sizeY;
-            finalY2 = originY;
+            if(directionNumbers.elementAt(3) != 0){
+                finalZ1 = originZ + (1 + sizeZ) * directionNumbers.elementAt(3);
+                finalZ2 = originZ + directionNumbers.elementAt(3);
+                if ((sizeX % 2 == 0)) {
+                    finalX1 = originX + sizeX / 2;
+                    finalX2 = originX - sizeX / 2;
+                } else {
+                    finalX1 = originX + (int) addRemove((double) sizeX, true);
+                    finalX2 = originX - (int) addRemove((double) sizeX, false);
+                }
+                if ((sizeY % 2 == 0)) {
+                    finalY1 = originY + sizeY / 2;
+                    finalY2 = originY - sizeY / 2;
+                } else {
+                    finalY1 = originY + (int) addRemove((double) sizeY, true);
+                    finalY2 = originY - (int) addRemove((double) sizeY, false);
+                }
+            }
             placeCuboid(finalX1, finalY1, finalZ1, finalX2, finalY2, finalZ2, item, player, targetBlock.getType());
         }
         else if (im.getAttach(item) == AttachType.INSERT){
@@ -169,11 +207,11 @@ public class Cuboid {
                 finalY2 = originY - (int) addRemove((double) sizeY, false);
             }
             if ((sizeZ % 2 == 0)) {
-                finalZ1 = originZ + sizeY / 2;
-                finalZ2 = originZ - sizeY / 2;
+                finalZ1 = originZ + sizeZ / 2;
+                finalZ2 = originZ - sizeZ / 2;
             } else {
-                finalZ1 = originZ + (int) addRemove((double) sizeY, true);
-                finalZ2 = originZ - (int) addRemove((double) sizeY, false);
+                finalZ1 = originZ + (int) addRemove((double) sizeZ, true);
+                finalZ2 = originZ - (int) addRemove((double) sizeZ, false);
             }
 
 
@@ -201,12 +239,11 @@ if you want to generally keep how it works now, instead of delaying everything b
         int maxX = Math.max(x1, x2);
         int maxY = Math.max(y1, y2);
         int maxZ = Math.max(z1, z2);
-        List<Vector<Integer>> bssa = new ArrayList<Vector<Integer>>();
+        List<Vector<Integer>> bssa = new ArrayList<>();
         for (int x = minX; x <= maxX; x++) {
-            int finalX = x;
-            for (int y = minY; y >= maxY; y++) {
+            for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
-                    Block b = player.getWorld().getBlockAt(finalX, y, z);
+                    Block b = player.getWorld().getBlockAt(x, y, z);
                     switch (im.getTool(item)) {
                         case REPLACE:
                             if (!b.isEmpty()) {
@@ -224,39 +261,29 @@ if you want to generally keep how it works now, instead of delaying everything b
                             b.setType(im.getPickedBlock(item));
                             break;
                         case CLEAR:
-                            b.setType(Material.AIR);
+                            if(im.getReplaceOnlyTarget(item)){
+                                if(b.getType() == material){
+                                    b.setType(Material.AIR);
+                                }
+                            }
+                            else {
+                                b.setType(Material.AIR);
+                            }
                             break;
                         case AIRPLACE:
                             if(b.isEmpty()){
                                 b.setType(im.getPickedBlock(item));
                             }
                             break;
-                        case OVERLAY:
-                            Block ba = player.getWorld().getBlockAt(x, y + 1, z);
-                            if(ba.isEmpty()){
-                                if(!b.isEmpty()){
-                                    Vector<Integer> vecs = new Vector<Integer>();
-                                    vecs.add(0, x);
-                                    vecs.add(1, y);
-                                    vecs.add(2, z);
-                                    vecs.add(3, y + 1);
-                                    bssa.add(vecs);
-                                    System.out.println("Flatten");
-
-                                }
-                            }
-                            break;
-                        case FLATTEN:
-                            Block bas = player.getWorld().getBlockAt(x, y + 1, z);
-                            if(bas.isEmpty()){
-                                if(!b.isEmpty()){
-                                    Vector<Integer> vecss = new Vector<Integer>();
-                                    vecss.add(0, x);
-                                    vecss.add(1, y);
-                                    vecss.add(2, z);
-                                    vecss.add(3, y + 1);
-                                    bssa.add(vecss);
-                                    System.out.println("Flatten");
+                        case FLATTEN, OVERLAY:
+                            if (!player.getWorld().getBlockAt(x, y + 1, z).isSolid()){
+                                if(b.isSolid()){
+                                    Vector<Integer> vecf = new Vector<>();
+                                    vecf.add(0, x);
+                                    vecf.add(1, y);
+                                    vecf.add(2, z);
+                                    vecf.add(3, y + 1);
+                                    bssa.add(vecf);
 
                                 }
                             }
@@ -274,16 +301,20 @@ if you want to generally keep how it works now, instead of delaying everything b
                 }
             }.runTaskLater(Worldshaper.getPlugin(), 10);*/
         }
-        if (bssa.size() > 0) {
-            for (int i = 0; i <= bssa.size(); i++) {
-                Vector<Integer> vecs = bssa.get(i);
-                if (im.getTool(item) == ToolType.OVERLAY) {
-                    player.getWorld().getBlockAt(vecs.get(0), vecs.get(3), vecs.get(2)).setType(im.getPickedBlock(item));
-                } else {
-                    player.getWorld().getBlockAt(vecs.get(0), vecs.get(1), vecs.get(2)).setType(Material.AIR);
-                }
+        if(im.getTool(item) == ToolType.FLATTEN || im.getTool(item) == ToolType.OVERLAY){
+            if(bssa.size() > 0){
+        for(int i = 0; i < bssa.size(); i++){
+            switch (im.getTool(item)){
+                case FLATTEN:
+                    Vector<Integer> vecs = bssa.get(i);
+                    player.getWorld().getBlockAt(vecs.elementAt(0), vecs.elementAt(1), vecs.elementAt(2)).setType(Material.AIR);
+                    break;
+                case OVERLAY:
+                    Vector<Integer> veco = bssa.get(i);
+                    player.getWorld().getBlockAt(veco.elementAt(0), veco.elementAt(3), veco.elementAt(2)).setType(im.getPickedBlock(item));
+                    break;
             }
-        }
+        }}}
 
     }
     public double addRemove(double number, boolean add) {
